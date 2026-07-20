@@ -13,5 +13,5 @@ export function getReadableError(error: unknown) {
     return error.message;
   }
 
-  return "Something went wrong. Check MetaMask and try again.";
+  return "Something went wrong. Check your wallet and try again.";
 }

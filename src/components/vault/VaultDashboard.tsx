@@ -9,6 +9,7 @@ import { TransactionNotice } from "@/components/ui/TransactionNotice";
 import { DepositForm } from "@/components/vault/DepositForm";
 import { VaultList } from "@/components/vault/VaultList";
 import { VaultStats } from "@/components/vault/VaultStats";
+import { reownProjectId } from "@/config/wagmi";
 import { useUserLocks } from "@/hooks/useUserLocks";
 import { useVaultContract } from "@/hooks/useVaultContract";
 
@@ -46,6 +47,13 @@ export function VaultDashboard() {
       </div>
 
       <div className="space-y-4">
+        {!reownProjectId ? (
+          <TransactionNotice
+            message="Add NEXT_PUBLIC_REOWN_PROJECT_ID to .env.local, then restart the development server or redeploy Vercel to enable wallet connections."
+            title="Wallet connection configuration required"
+            tone="warning"
+          />
+        ) : null}
         {!isConfigured ? (
           <TransactionNotice
             message={`${configMessage} Deposit and withdrawal actions are disabled until .env.local contains the deployed BSC Testnet contract address.`}

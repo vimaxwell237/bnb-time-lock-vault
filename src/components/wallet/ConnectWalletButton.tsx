@@ -1,54 +1,70 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
-import { LogOut, Wallet } from "lucide-react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useState } from "react";
+import { useAppKit } from "@reown/appkit/react";
+import { Wallet } from "lucide-react";
+import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/Button";
+import { reownProjectId } from "@/config/wagmi";
+import { getReadableError } from "@/lib/errors";
 import { formatAddress } from "@/lib/format";
 
-type EthereumWindow = Window & {
-  ethereum?: {
-    isMetaMask?: boolean;
-  };
+type ConfiguredWalletButtonProps = {
+  address?: `0x${string}`;
+  isConnected: boolean;
 };
 
-const subscribeToProvider = () => () => undefined;
-const getServerProviderSnapshot = () => false;
-const getClientProviderSnapshot = () =>
-  typeof window !== "undefined" && Boolean((window as EthereumWindow).ethereum?.isMetaMask);
+function ConfiguredWalletButton({
+  address,
+  isConnected,
+}: ConfiguredWalletButtonProps) {
+  const { open } = useAppKit();
+  const [error, setError] = useState<string | null>(null);
+
+  async function openWalletView() {
+    setError(null);
+
+    try {
+      await open({ view: isConnected ? "Account" : "Connect" });
+    } catch (openError) {
+      setError(getReadableError(openError));
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button
+        aria-label={isConnected ? "Open wallet account" : "Connect wallet"}
+        onClick={() => void openWalletView()}
+        title={error ?? undefined}
+        variant={isConnected ? "secondary" : "primary"}
+      >
+        <Wallet className="size-4" />
+        {isConnected ? formatAddress(address) : "Connect Wallet"}
+      </Button>
+      {error ? (
+        <span className="max-w-48 text-xs font-semibold text-red-700" role="status">
+          Wallet connection failed
+        </span>
+      ) : null}
+    </div>
+  );
+}
 
 export function ConnectWalletButton() {
   const { address, isConnected } = useAccount();
-  const { connect, connectors, isPending } = useConnect();
-  const { disconnect } = useDisconnect();
-  const hasInjectedWallet = useSyncExternalStore(
-    subscribeToProvider,
-    getClientProviderSnapshot,
-    getServerProviderSnapshot,
-  );
 
-  const injectedConnector = useMemo(
-    () => connectors.find((connector) => connector.id === "injected") ?? connectors[0],
-    [connectors],
-  );
-
-  if (isConnected) {
+  if (!reownProjectId) {
     return (
-      <Button onClick={() => disconnect()} variant="secondary">
-        <LogOut className="size-4" />
-        {formatAddress(address)}
+      <Button
+        disabled
+        title="Add NEXT_PUBLIC_REOWN_PROJECT_ID to .env.local to enable wallet connections."
+      >
+        <Wallet className="size-4" />
+        Connect Wallet
       </Button>
     );
   }
 
-  return (
-    <Button
-      disabled={!hasInjectedWallet || !injectedConnector}
-      isLoading={isPending}
-      onClick={() => injectedConnector && connect({ connector: injectedConnector })}
-    >
-      <Wallet className="size-4" />
-      {hasInjectedWallet ? "Connect MetaMask" : "Install MetaMask"}
-    </Button>
-  );
+  return <ConfiguredWalletButton address={address} isConnected={isConnected} />;
 }

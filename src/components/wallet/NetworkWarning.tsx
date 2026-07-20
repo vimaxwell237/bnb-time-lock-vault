@@ -34,7 +34,7 @@ export function NetworkWarning() {
           <div>
             <p className="font-semibold">Wrong network selected</p>
             <p className="mt-1 text-sm text-amber-900">
-              Switch MetaMask to BSC Testnet before depositing or withdrawing.
+              Switch your wallet to BSC Testnet before depositing or withdrawing.
             </p>
             {error ? <p className="mt-2 text-sm font-semibold text-red-700">{error}</p> : null}
           </div>
