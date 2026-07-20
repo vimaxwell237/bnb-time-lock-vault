@@ -12,16 +12,12 @@
     "@reown/appkit": "^1.8.22",
     "@reown/appkit-adapter-wagmi": "^1.8.22",
     "@tanstack/react-query": "^5.101.2",
-    "@wagmi/connectors": "^6.2.0",
-    "@x402/core": "^2.19.0",
-    "@x402/evm": "^2.19.0",
-    "@x402/extensions": "^2.19.0",
-    "@x402/svm": "^2.19.0",
+    "@wagmi/connectors": "6.1.0",
     "lucide-react": "^1.25.0",
     "next": "^16.2.10",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "viem": "^2.55.0",
+    "viem": "2.55.4",
     "wagmi": "^2.19.5"
   },
   "devDependencies": {
@@ -34,5 +30,8 @@
     "eslint-config-next": "^16.2.10",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "@wagmi/connectors": "6.1.0"
   }
 }
