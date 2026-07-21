@@ -17,7 +17,9 @@ function getSafeBscTestnetRpcUrl(value?: string) {
   if (
     !trimmed ||
     trimmed.includes("NEXT_PUBLIC_") ||
-    trimmed.includes("rpc.walletconnect.org")
+    trimmed.includes("rpc.walletconnect.org") ||
+    trimmed.includes("data-seed-prebsc") ||
+    trimmed.includes("binance.org")
   ) {
     return siteConfig.defaultRpcUrl;
   }

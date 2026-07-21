@@ -6,5 +6,6 @@ export const siteConfig = {
   chainId: 97,
   currencySymbol: "tBNB",
   explorerUrl: "https://testnet.bscscan.com",
-  defaultRpcUrl: "https://data-seed-prebsc-1-s1.bnbchain.org:8545",
+  defaultRpcUrl:
+    "https://bsc-testnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3",
 } as const;
