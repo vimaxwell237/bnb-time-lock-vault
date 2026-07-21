@@ -18,14 +18,14 @@ NEXT_PUBLIC_REOWN_PROJECT_ID=d088481ea899320482b1ddcb90e47540
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_VAULT_CONTRACT_ADDRESS=0x3Bb9bd4D6dFD7bd2031DEE1D47215390ecb38fE4
 NEXT_PUBLIC_VAULT_DEPLOYMENT_BLOCK=
-NEXT_PUBLIC_BSC_TESTNET_RPC_URL=https://bsc-testnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3
+NEXT_PUBLIC_BSC_TESTNET_RPC_URL=https://rpc.sentio.xyz/bsc-testnet
 ```
 
 `NEXT_PUBLIC_REOWN_PROJECT_ID` enables Reown AppKit wallet connections. The configured wallet UI supports injected wallets such as MetaMask, WalletConnect QR and mobile deep links, and wallets such as Trust Wallet. Email and social login are disabled.
 
 `NEXT_PUBLIC_VAULT_DEPLOYMENT_BLOCK` enables wallet transaction history. Find it on BSC Testnet BscScan by opening the vault contract, locating the contract creation transaction, and copying the creation block number. Leave it blank only when you want the dashboard to hide activity history with a configuration message.
 
-`NEXT_PUBLIC_BSC_TESTNET_RPC_URL` should be a BSC Testnet RPC endpoint that supports `eth_getLogs`. The default NodeReal endpoint is used when the BNB seed endpoints, WalletConnect RPC URLs, or placeholder values are configured because those endpoints reject activity-history log queries.
+`NEXT_PUBLIC_BSC_TESTNET_RPC_URL` should be a BSC Testnet RPC endpoint that supports `eth_getLogs`. The default Sentio endpoint is used when the BNB seed endpoints, NodeReal public endpoint, WalletConnect RPC URLs, or placeholder values are configured because those endpoints can reject or exhaust activity-history log queries.
 
 Start the app with:
 

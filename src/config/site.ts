@@ -6,6 +6,5 @@ export const siteConfig = {
   chainId: 97,
   currencySymbol: "tBNB",
   explorerUrl: "https://testnet.bscscan.com",
-  defaultRpcUrl:
-    "https://bsc-testnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3",
+  defaultRpcUrl: "https://rpc.sentio.xyz/bsc-testnet",
 } as const;
