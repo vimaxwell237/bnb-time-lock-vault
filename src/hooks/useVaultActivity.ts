@@ -7,7 +7,8 @@ import { bscTestnet, bscTestnetRpcUrl } from "@/config/wagmi";
 import { vaultContractAddress, vaultDeploymentBlock } from "@/contracts/vaultConfig";
 import type { VaultActivityItem } from "@/types/activity";
 
-const BLOCK_CHUNK_SIZE = 5_000n;
+// Public BSC Testnet RPC endpoints commonly cap eth_getLogs ranges below 5,000 blocks.
+const BLOCK_CHUNK_SIZE = 500n;
 
 const depositEvent = parseAbiItem(
   "event BNBDeposited(address indexed user, uint256 indexed lockId, uint256 amount, uint256 depositedAt, uint256 releaseTime)",
