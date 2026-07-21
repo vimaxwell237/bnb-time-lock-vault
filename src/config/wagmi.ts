@@ -9,8 +9,29 @@ import {
 import { siteConfig } from "@/config/site";
 
 export const bscTestnetRpcUrl =
-  process.env.NEXT_PUBLIC_BSC_TESTNET_RPC_URL?.trim() ||
-  siteConfig.defaultRpcUrl;
+  getSafeBscTestnetRpcUrl(process.env.NEXT_PUBLIC_BSC_TESTNET_RPC_URL);
+
+function getSafeBscTestnetRpcUrl(value?: string) {
+  const trimmed = value?.trim();
+
+  if (
+    !trimmed ||
+    trimmed.includes("NEXT_PUBLIC_") ||
+    trimmed.includes("rpc.walletconnect.org")
+  ) {
+    return siteConfig.defaultRpcUrl;
+  }
+
+  try {
+    const parsed = new URL(trimmed);
+
+    return parsed.protocol === "http:" || parsed.protocol === "https:"
+      ? trimmed
+      : siteConfig.defaultRpcUrl;
+  } catch {
+    return siteConfig.defaultRpcUrl;
+  }
+}
 
 export const bscTestnet = defineChain({
   id: siteConfig.chainId,

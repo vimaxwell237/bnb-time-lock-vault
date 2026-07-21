@@ -25,6 +25,8 @@ NEXT_PUBLIC_BSC_TESTNET_RPC_URL=https://data-seed-prebsc-1-s1.bnbchain.org:8545
 
 `NEXT_PUBLIC_VAULT_DEPLOYMENT_BLOCK` enables wallet transaction history. Find it on BSC Testnet BscScan by opening the vault contract, locating the contract creation transaction, and copying the creation block number. Leave it blank only when you want the dashboard to hide activity history with a configuration message.
 
+`NEXT_PUBLIC_BSC_TESTNET_RPC_URL` should be a direct BSC Testnet RPC endpoint. Do not set it to `https://rpc.walletconnect.org/...`; WalletConnect RPC URLs require a valid project id and can reject `eth_getLogs` history requests with HTTP 401.
+
 Start the app with:
 
 ```powershell
