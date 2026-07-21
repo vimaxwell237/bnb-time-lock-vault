@@ -43,7 +43,9 @@ export const reownProjectId =
 export const appKitMetadata = {
   name: siteConfig.name,
   description: "Lock native tBNB by duration and withdraw after maturity.",
-  url: process.env.NEXT_PUBLIC_APP_URL?.trim() || "http://localhost:3000",
+  url:
+    process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+    "https://bnb-time-lock-vault.vercel.app",
   icons: [],
 };
 
