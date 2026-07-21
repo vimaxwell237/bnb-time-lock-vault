@@ -34,8 +34,6 @@ type DepositFormProps = {
 };
 
 const durationPresets = [
-  { label: "5 minutes", value: "5" },
-  { label: "30 minutes", value: "30" },
   { label: "1 hour", value: "60" },
   { label: "1 day", value: "1440" },
   { label: "7 days", value: "10080" },
@@ -270,7 +268,7 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
         <Input
           inputMode="numeric"
           label="Duration in minutes"
-          min="1"
+          min={limitsQuery.data ? Number(limitsQuery.data.minLockDuration) : 1}
           onChange={(event) => updateDuration(event.target.value)}
           placeholder="60"
           step="1"
@@ -282,6 +280,12 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
           <p className="text-xs leading-5 text-slate-500">
             Contract range: {formatDurationFromMinutes(limitsQuery.data.minLockDuration)} to{" "}
             {formatDurationFromMinutes(limitsQuery.data.maxLockDuration)}.
+          </p>
+        ) : null}
+
+        {validationMessage && (amount || duration) ? (
+          <p className="text-sm font-medium text-red-700" role="alert">
+            {validationMessage}
           </p>
         ) : null}
 
