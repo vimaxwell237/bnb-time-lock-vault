@@ -6,7 +6,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { NetworkWarning } from "@/components/wallet/NetworkWarning";
 import { WalletSummary } from "@/components/wallet/WalletSummary";
 import { TransactionNotice } from "@/components/ui/TransactionNotice";
+import { ContractInfo } from "@/components/vault/ContractInfo";
 import { DepositForm } from "@/components/vault/DepositForm";
+import { VaultActivity } from "@/components/vault/VaultActivity";
 import { VaultList } from "@/components/vault/VaultList";
 import { VaultStats } from "@/components/vault/VaultStats";
 import { reownProjectId } from "@/config/wagmi";
@@ -23,7 +25,12 @@ export function VaultDashboard() {
   const refreshVaultData = useCallback(
     () => {
       void refetch();
-      void queryClient.invalidateQueries();
+      void queryClient.invalidateQueries({ queryKey: ["user-locks"] });
+      void queryClient.invalidateQueries({ queryKey: ["vault-stats"] });
+      void queryClient.invalidateQueries({ queryKey: ["vault-activity"] });
+      void queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey.includes("balance"),
+      });
     },
     [queryClient, refetch],
   );
@@ -74,11 +81,13 @@ export function VaultDashboard() {
             locks={locksQuery.data ?? []}
             onTransactionConfirmed={refreshVaultData}
           />
+          <VaultActivity />
         </section>
 
         <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
           <WalletSummary />
           <DepositForm onTransactionConfirmed={refreshVaultData} />
+          <ContractInfo />
         </aside>
       </div>
     </div>

@@ -47,6 +47,13 @@ export function formatDateTime(seconds?: bigint) {
   }).format(new Date(timestamp));
 }
 
+export function formatDateTimeFromDate(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
 export function formatCountdown(totalSeconds: number) {
   if (!Number.isFinite(totalSeconds) || totalSeconds <= 0) {
     return "Ready";
@@ -104,4 +111,20 @@ export function formatDurationFromMinutes(value?: bigint) {
 
 export function getExplorerTxUrl(hash: Hash | string) {
   return `${siteConfig.explorerUrl}/tx/${hash}`;
+}
+
+export function getExplorerAddressUrl(address: Address | string) {
+  return `${siteConfig.explorerUrl}/address/${address}`;
+}
+
+export function getExplorerContractUrl(address: Address | string) {
+  return getExplorerAddressUrl(address);
+}
+
+export function formatHash(hash?: Hash | string, size = 6) {
+  if (!hash) {
+    return "--";
+  }
+
+  return `${hash.slice(0, size + 2)}...${hash.slice(-size)}`;
 }

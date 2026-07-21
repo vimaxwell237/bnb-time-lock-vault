@@ -1,14 +1,19 @@
 "use client";
 
-import { Copy, RefreshCw, WalletCards } from "lucide-react";
+import { useState } from "react";
+import { useAppKit } from "@reown/appkit/react";
+import { Copy, ExternalLink, RefreshCw, Settings, WalletCards } from "lucide-react";
 import { useAccount, useBalance } from "wagmi";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { bscTestnet } from "@/config/wagmi";
-import { formatAddress, formatTbnb } from "@/lib/format";
+import { getReadableError } from "@/lib/errors";
+import { formatAddress, formatTbnb, getExplorerAddressUrl } from "@/lib/format";
 
 export function WalletSummary() {
   const { address, chainId, isConnected } = useAccount();
+  const { open } = useAppKit();
+  const [error, setError] = useState<string | null>(null);
   const isCorrectNetwork = chainId === bscTestnet.id;
   const { data: balance, isLoading, refetch } = useBalance({
     address,
@@ -17,6 +22,16 @@ export function WalletSummary() {
       enabled: Boolean(address && isCorrectNetwork),
     },
   });
+
+  async function openAccount() {
+    setError(null);
+
+    try {
+      await open({ view: "Account" });
+    } catch (openError) {
+      setError(getReadableError(openError));
+    }
+  }
 
   return (
     <Card className="p-5">
@@ -40,7 +55,7 @@ export function WalletSummary() {
             {address ? (
               <button
                 aria-label="Copy wallet address"
-                className="rounded-lg p-2 text-slate-500 transition hover:bg-white hover:text-slate-900"
+                className="rounded-lg p-2 text-slate-500 transition hover:bg-white hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500"
                 onClick={() => void navigator.clipboard.writeText(address)}
                 type="button"
               >
@@ -70,6 +85,52 @@ export function WalletSummary() {
             <p className="mt-2 text-sm text-amber-700">BSC Testnet is required.</p>
           ) : null}
         </div>
+
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <p className="text-xs font-semibold uppercase text-slate-500">Current network</p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span className="font-semibold text-slate-950">
+              {isConnected ? (isCorrectNetwork ? "BSC Testnet" : `Chain ${chainId ?? "unknown"}`) : "Not connected"}
+            </span>
+            {isConnected ? (
+              <span
+                className={
+                  isCorrectNetwork
+                    ? "inline-flex h-7 items-center rounded-lg border border-emerald-200 bg-emerald-50 px-2 text-xs font-bold text-emerald-800"
+                    : "inline-flex h-7 items-center rounded-lg border border-amber-200 bg-amber-50 px-2 text-xs font-bold text-amber-800"
+                }
+              >
+                {isCorrectNetwork ? "Correct network" : "Wrong network"}
+              </span>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {address ? (
+            <a
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-900 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500"
+              href={getExplorerAddressUrl(address)}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <ExternalLink className="size-3.5" />
+              Open address
+            </a>
+          ) : null}
+          {isConnected ? (
+            <Button onClick={() => void openAccount()} size="sm" variant="secondary">
+              <Settings className="size-3.5" />
+              Manage wallet
+            </Button>
+          ) : null}
+        </div>
+
+        {error ? (
+          <p className="text-sm font-semibold text-red-700" role="alert">
+            {error}
+          </p>
+        ) : null}
       </div>
     </Card>
   );

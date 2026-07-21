@@ -36,7 +36,10 @@ export function TransactionNotice({
   const Icon = toneIcons[tone];
 
   return (
-    <div className={cn("rounded-lg border p-4", toneClasses[tone], className)}>
+    <div
+      className={cn("rounded-lg border p-4", toneClasses[tone], className)}
+      role={tone === "error" ? "alert" : "status"}
+    >
       <div className="flex gap-3">
         <Icon className="mt-0.5 size-5 shrink-0" />
         <div className="min-w-0 flex-1">

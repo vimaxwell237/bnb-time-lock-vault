@@ -1,12 +1,15 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import type { Hash } from "viem";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Search } from "lucide-react";
 import { useAccount } from "wagmi";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { Spinner } from "@/components/ui/Spinner";
 import { EmptyVaultState } from "@/components/vault/EmptyVaultState";
 import { VaultCard } from "@/components/vault/VaultCard";
-import type { VaultLock } from "@/types/vault";
+import type { LockStatus, VaultLock } from "@/types/vault";
 
 type VaultListProps = {
   error: Error | null;
@@ -16,6 +19,22 @@ type VaultListProps = {
   onTransactionConfirmed?: (hash: Hash) => void;
 };
 
+type LockFilter = "all" | LockStatus;
+type LockSort =
+  | "newest"
+  | "oldest"
+  | "release-soonest"
+  | "release-latest"
+  | "highest"
+  | "lowest";
+
+const filterOptions: Array<{ label: string; value: LockFilter }> = [
+  { label: "All", value: "all" },
+  { label: "Active", value: "active" },
+  { label: "Ready", value: "matured" },
+  { label: "Withdrawn", value: "withdrawn" },
+];
+
 export function VaultList({
   error,
   isError,
@@ -24,6 +43,54 @@ export function VaultList({
   onTransactionConfirmed,
 }: VaultListProps) {
   const { isConnected } = useAccount();
+  const [filter, setFilter] = useState<LockFilter>("all");
+  const [searchId, setSearchId] = useState("");
+  const [sortOrder, setSortOrder] = useState<LockSort>("newest");
+
+  const lockStatuses = useMemo(
+    () =>
+      locks.map((lock) => ({
+        lock,
+        status: getLockStatus(lock),
+      })),
+    [locks],
+  );
+
+  const counts = useMemo(
+    () => ({
+      active: lockStatuses.filter((item) => item.status === "active").length,
+      all: lockStatuses.length,
+      matured: lockStatuses.filter((item) => item.status === "matured").length,
+      withdrawn: lockStatuses.filter((item) => item.status === "withdrawn").length,
+    }),
+    [lockStatuses],
+  );
+
+  const visibleLocks = useMemo(() => {
+    const normalizedSearch = searchId.trim();
+
+    const matches = lockStatuses.filter(({ lock, status }) => {
+      const matchesStatus = filter === "all" || status === filter;
+      const matchesSearch =
+        !normalizedSearch || lock.id.toString().includes(normalizedSearch);
+
+      return matchesStatus && matchesSearch;
+    });
+
+    return [...matches]
+      .sort((a, b) => sortLocks(a.lock, b.lock, sortOrder))
+      .map(({ lock }) => lock);
+  }, [filter, lockStatuses, searchId, sortOrder]);
+
+  const emptyTitle = searchId.trim()
+    ? "No lock matches this ID"
+    : filter === "active"
+      ? "No active locks"
+      : filter === "matured"
+        ? "No matured locks are ready"
+        : filter === "withdrawn"
+          ? "No withdrawn locks"
+          : "No locks found";
 
   return (
     <section>
@@ -39,7 +106,7 @@ export function VaultList({
 
       {!isConnected ? (
         <EmptyVaultState
-          message="Connect MetaMask to load the lock IDs owned by the selected wallet."
+          message="Connect your wallet to load the lock IDs owned by the selected address."
           title="Wallet not connected"
         />
       ) : isLoading ? (
@@ -65,16 +132,100 @@ export function VaultList({
           title="No locks found"
         />
       ) : (
-        <div className="space-y-4">
-          {locks.map((lock) => (
-            <VaultCard
-              key={lock.id.toString()}
-              lock={lock}
-              onTransactionConfirmed={onTransactionConfirmed}
-            />
-          ))}
-        </div>
+        <>
+          <div className="mb-4 flex flex-wrap gap-2">
+            {filterOptions.map((option) => (
+              <Button
+                key={option.value}
+                onClick={() => setFilter(option.value)}
+                size="sm"
+                variant={filter === option.value ? "primary" : "secondary"}
+              >
+                {option.label} ({counts[option.value]})
+              </Button>
+            ))}
+          </div>
+
+          <div className="mb-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_220px]">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-9 size-4 text-slate-400" />
+              <Input
+                className="pl-9"
+                inputMode="numeric"
+                label="Search by lock ID"
+                onChange={(event) => setSearchId(event.target.value)}
+                placeholder="Lock ID"
+                value={searchId}
+              />
+            </div>
+            <label className="grid gap-2 text-sm font-medium text-slate-800">
+              <span>Sort positions</span>
+              <select
+                className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                onChange={(event) => setSortOrder(event.target.value as LockSort)}
+                value={sortOrder}
+              >
+                <option value="newest">Newest deposit</option>
+                <option value="oldest">Oldest deposit</option>
+                <option value="release-soonest">Release soonest</option>
+                <option value="release-latest">Release latest</option>
+                <option value="highest">Highest amount</option>
+                <option value="lowest">Lowest amount</option>
+              </select>
+            </label>
+          </div>
+
+          {visibleLocks.length === 0 ? (
+            <EmptyVaultState message="Try another status, sort, or lock ID." title={emptyTitle} />
+          ) : (
+            <div className="space-y-4">
+              {visibleLocks.map((lock) => (
+                <VaultCard
+                  key={lock.id.toString()}
+                  lock={lock}
+                  onTransactionConfirmed={onTransactionConfirmed}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </section>
   );
+}
+
+function getLockStatus(lock: VaultLock): LockStatus {
+  if (lock.withdrawn) {
+    return "withdrawn";
+  }
+
+  return lock.isWithdrawable || lock.releaseTime <= BigInt(Math.floor(Date.now() / 1000))
+    ? "matured"
+    : "active";
+}
+
+function sortLocks(a: VaultLock, b: VaultLock, sortOrder: LockSort) {
+  switch (sortOrder) {
+    case "oldest":
+      return compareBigInt(a.depositedAt, b.depositedAt);
+    case "release-soonest":
+      return compareBigInt(a.releaseTime, b.releaseTime);
+    case "release-latest":
+      return compareBigInt(b.releaseTime, a.releaseTime);
+    case "highest":
+      return compareBigInt(b.amount, a.amount);
+    case "lowest":
+      return compareBigInt(a.amount, b.amount);
+    case "newest":
+    default:
+      return compareBigInt(b.depositedAt, a.depositedAt);
+  }
+}
+
+function compareBigInt(a: bigint, b: bigint) {
+  if (a === b) {
+    return 0;
+  }
+
+  return a > b ? 1 : -1;
 }

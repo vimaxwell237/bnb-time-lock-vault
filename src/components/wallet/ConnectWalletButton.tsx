@@ -40,7 +40,7 @@ function ConfiguredWalletButton({
         variant={isConnected ? "secondary" : "primary"}
       >
         <Wallet className="size-4" />
-        {isConnected ? formatAddress(address) : "Connect Wallet"}
+        {isConnected ? formatAddress(address) : "Connect wallet"}
       </Button>
       {error ? (
         <span className="max-w-48 text-xs font-semibold text-red-700" role="status">
@@ -59,11 +59,11 @@ export function ConnectWalletButton() {
       <Button
         disabled
         title="Add NEXT_PUBLIC_REOWN_PROJECT_ID to .env.local to enable wallet connections."
-      >
-        <Wallet className="size-4" />
-        Connect Wallet
-      </Button>
-    );
+    >
+      <Wallet className="size-4" />
+      Connect wallet
+    </Button>
+  );
   }
 
   return <ConfiguredWalletButton address={address} isConnected={isConnected} />;

@@ -7,6 +7,7 @@ import { Banknote, CalendarClock, CircleDollarSign, HashIcon } from "lucide-reac
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Dialog } from "@/components/ui/Dialog";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TransactionNotice } from "@/components/ui/TransactionNotice";
 import { bscTestnet } from "@/config/wagmi";
@@ -23,14 +24,16 @@ type VaultCardProps = {
 };
 
 export function VaultCard({ lock, onTransactionConfirmed }: VaultCardProps) {
-  const { chainId, isConnected } = useAccount();
+  const { address, chainId, isConnected } = useAccount();
   const { address: vaultAddress, isConfigured } = useVaultContract();
   const { isPending, writeContractAsync } = useWriteContract();
   const countdown = useCountdown(lock.releaseTime, lock.withdrawn);
   const [transactionHash, setTransactionHash] = useState<Hash | undefined>();
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const handledHashRef = useRef<Hash | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const isCorrectNetwork = chainId === bscTestnet.id;
+  const isOwner = address?.toLowerCase() === lock.owner.toLowerCase();
 
   const {
     data: receipt,
@@ -56,6 +59,7 @@ export function VaultCard({ lock, onTransactionConfirmed }: VaultCardProps) {
     isConfigured &&
     isConnected &&
     isCorrectNetwork &&
+    isOwner &&
     !lock.withdrawn &&
     status === "matured" &&
     Boolean(vaultAddress);
@@ -71,7 +75,7 @@ export function VaultCard({ lock, onTransactionConfirmed }: VaultCardProps) {
     }
   }, [isConfirmed, onTransactionConfirmed, receipt?.transactionHash]);
 
-  async function withdraw() {
+  function requestWithdraw() {
     setError(null);
 
     if (!vaultAddress) {
@@ -80,7 +84,39 @@ export function VaultCard({ lock, onTransactionConfirmed }: VaultCardProps) {
     }
 
     if (!isCorrectNetwork) {
-      setError("Switch MetaMask to BSC Testnet before withdrawing.");
+      setError("Switch your wallet to BSC Testnet before withdrawing.");
+      return;
+    }
+
+    if (!isOwner) {
+      setError("The connected wallet is not the owner of this lock.");
+      return;
+    }
+
+    if (lock.withdrawn) {
+      setError("This lock has already been withdrawn.");
+      return;
+    }
+
+    if (status !== "matured") {
+      setError("Funds are still locked until the release time.");
+      return;
+    }
+
+    setIsConfirmOpen(true);
+  }
+
+  async function withdraw() {
+    setError(null);
+    setIsConfirmOpen(false);
+
+    if (!vaultAddress) {
+      setError("Contract configuration required. Add the contract address to .env.local.");
+      return;
+    }
+
+    if (!isCorrectNetwork) {
+      setError("Switch your wallet to BSC Testnet before withdrawing.");
       return;
     }
 
@@ -117,10 +153,14 @@ export function VaultCard({ lock, onTransactionConfirmed }: VaultCardProps) {
         <Button
           disabled={!canWithdraw || isPending || isConfirming}
           isLoading={isPending || isConfirming}
-          onClick={withdraw}
+          onClick={requestWithdraw}
           variant={status === "matured" ? "primary" : "secondary"}
         >
-          Withdraw
+          {isPending
+            ? "Waiting for wallet approval"
+            : isConfirming
+              ? "Waiting for confirmation"
+              : "Withdraw"}
         </Button>
       </div>
 
@@ -169,7 +209,48 @@ export function VaultCard({ lock, onTransactionConfirmed }: VaultCardProps) {
           tone={isConfirmed ? "success" : "info"}
         />
       ) : null}
+
+      <Dialog
+        labelledBy={`withdraw-confirmation-title-${lock.id.toString()}`}
+        onClose={() => setIsConfirmOpen(false)}
+        open={isConfirmOpen}
+      >
+        <div className="pr-10">
+          <p className="text-sm font-semibold text-slate-500">Confirm withdrawal</p>
+          <h3
+            className="mt-1 text-xl font-bold text-slate-950"
+            id={`withdraw-confirmation-title-${lock.id.toString()}`}
+          >
+            Withdraw lock #{lock.id.toString()}
+          </h3>
+        </div>
+        <dl className="mt-5 grid gap-3 text-sm">
+          <SummaryRow label="Amount" value={formatTbnb(lock.amount)} />
+          <SummaryRow label="Owner" value={formatAddress(lock.owner, 6)} />
+          <SummaryRow label="Release date" value={formatDateTime(lock.releaseTime)} />
+          <SummaryRow label="Current status" value={status === "matured" ? "Ready to withdraw" : status} />
+          <SummaryRow label="Network" value="BSC Testnet" />
+          <SummaryRow label="Destination wallet" value={formatAddress(address, 6)} />
+        </dl>
+        <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <Button onClick={() => setIsConfirmOpen(false)} variant="secondary">
+            Cancel
+          </Button>
+          <Button disabled={!canWithdraw || isPending || isConfirming} isLoading={isPending} onClick={withdraw}>
+            Confirm withdrawal
+          </Button>
+        </div>
+      </Dialog>
     </Card>
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <dt className="text-slate-500">{label}</dt>
+      <dd className="min-w-0 break-words text-right font-semibold text-slate-950">{value}</dd>
+    </div>
   );
 }
 
