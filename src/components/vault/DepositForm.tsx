@@ -7,7 +7,6 @@ import { formatEther, parseEther } from "viem";
 import { CalendarClock, LockKeyhole } from "lucide-react";
 import {
   useAccount,
-  useBalance,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
@@ -26,6 +25,7 @@ import {
 import { validateDepositInput } from "@/lib/validation";
 import { useVaultContract } from "@/hooks/useVaultContract";
 import { useVaultLimits } from "@/hooks/useVaultLimits";
+import { useNativeBalance } from "@/hooks/useNativeBalance";
 
 type DepositFormProps = {
   onTransactionConfirmed?: (hash: Hash) => void;
@@ -52,13 +52,10 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
   const handledHashRef = useRef<Hash | undefined>(undefined);
   const isCorrectNetwork = chainId === bscTestnet.id;
   const limitsQuery = useVaultLimits();
-  const { data: balance, refetch: refetchBalance } = useBalance({
+  const { data: balance, refetch: refetchBalance } = useNativeBalance(
     address,
-    chainId: bscTestnet.id,
-    query: {
-      enabled: Boolean(address && isCorrectNetwork),
-    },
-  });
+    isCorrectNetwork,
+  );
 
   const {
     data: receipt,
@@ -76,13 +73,13 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
     () =>
       validateDepositInput({
         amount,
-        balance: balance?.value,
+        balance,
         duration,
         gasReserve: GAS_RESERVE,
         maxDuration: limitsQuery.data?.maxLockDuration,
         minDuration: limitsQuery.data?.minLockDuration,
       }),
-    [amount, balance?.value, duration, limitsQuery.data],
+    [amount, balance, duration, limitsQuery.data],
   );
 
   const estimatedReleaseDate = useMemo(() => {
@@ -140,7 +137,7 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
 
     const fieldError = validateDepositInput({
       amount,
-      balance: balance?.value,
+      balance,
       duration,
       gasReserve: GAS_RESERVE,
       maxDuration: limitsQuery.data?.maxLockDuration,
@@ -198,7 +195,7 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
   }
 
   function applyMaxAmount() {
-    const available = balance?.value;
+    const available = balance;
 
     if (available === undefined || available <= GAS_RESERVE) {
       setAmount("0");
@@ -240,7 +237,7 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
             />
             <Button
               className="mb-0"
-              disabled={!balance?.value}
+              disabled={!balance}
               onClick={applyMaxAmount}
               variant="secondary"
             >

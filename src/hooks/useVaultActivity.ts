@@ -2,8 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { Address } from "viem";
-import { createPublicClient, http, parseAbiItem } from "viem";
-import { bscTestnet, bscTestnetRpcUrl } from "@/config/wagmi";
+import { parseAbiItem } from "viem";
+import { bscTestnet, bscTestnetPublicClient } from "@/config/wagmi";
 import { vaultContractAddress, vaultDeploymentBlock } from "@/contracts/vaultConfig";
 import type { VaultActivityItem } from "@/types/activity";
 
@@ -19,11 +19,6 @@ const withdrawalEvent = parseAbiItem(
 );
 
 // Activity history must use the direct BSC RPC, independent of the connected wallet transport.
-const activityClient = createPublicClient({
-  chain: bscTestnet,
-  transport: http(bscTestnetRpcUrl),
-});
-
 type UseVaultActivityOptions = {
   address?: Address;
   enabled?: boolean;
@@ -43,7 +38,7 @@ export function useVaultActivity({ address, enabled = true }: UseVaultActivityOp
         return [];
       }
 
-      const client = activityClient;
+      const client = bscTestnetPublicClient;
       const contractAddress = vaultContractAddress;
       const deploymentBlock = vaultDeploymentBlock;
       const latestBlock = await client.getBlockNumber();

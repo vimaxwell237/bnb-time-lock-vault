@@ -2,23 +2,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Boxes, Clock, Coins, Landmark } from "lucide-react";
-import { usePublicClient } from "wagmi";
 import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
-import { bscTestnet } from "@/config/wagmi";
+import { bscTestnetPublicClient } from "@/config/wagmi";
 import { vaultAbi } from "@/contracts/vaultAbi";
 import { vaultContractAddress } from "@/contracts/vaultConfig";
 import { formatDurationFromMinutes, formatTbnb } from "@/lib/format";
 import type { VaultStatsSnapshot } from "@/types/vault";
 
 export function VaultStats() {
-  const publicClient = usePublicClient({ chainId: bscTestnet.id });
-
   const { data, isLoading } = useQuery({
-    enabled: Boolean(publicClient && vaultContractAddress),
+    enabled: Boolean(vaultContractAddress),
     queryKey: ["vault-stats", vaultContractAddress],
     queryFn: async (): Promise<VaultStatsSnapshot> => {
-      if (!publicClient || !vaultContractAddress) {
+      if (!vaultContractAddress) {
         throw new Error("Contract configuration required.");
       }
 
@@ -29,27 +26,27 @@ export function VaultStats() {
         minLockDuration,
         maxLockDuration,
       ] = await Promise.all([
-        publicClient.readContract({
+        bscTestnetPublicClient.readContract({
           address: vaultContractAddress,
           abi: vaultAbi,
           functionName: "contractBalance",
         }),
-        publicClient.readContract({
+        bscTestnetPublicClient.readContract({
           address: vaultContractAddress,
           abi: vaultAbi,
           functionName: "totalLocked",
         }),
-        publicClient.readContract({
+        bscTestnetPublicClient.readContract({
           address: vaultContractAddress,
           abi: vaultAbi,
           functionName: "nextLockId",
         }),
-        publicClient.readContract({
+        bscTestnetPublicClient.readContract({
           address: vaultContractAddress,
           abi: vaultAbi,
           functionName: "MIN_LOCK_DURATION",
         }),
-        publicClient.readContract({
+        bscTestnetPublicClient.readContract({
           address: vaultContractAddress,
           abi: vaultAbi,
           functionName: "MAX_LOCK_DURATION",

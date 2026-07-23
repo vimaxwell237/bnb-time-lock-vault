@@ -3,25 +3,23 @@
 import { useState } from "react";
 import { useAppKit } from "@reown/appkit/react";
 import { Copy, ExternalLink, RefreshCw, Settings, WalletCards } from "lucide-react";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { bscTestnet } from "@/config/wagmi";
 import { getReadableError } from "@/lib/errors";
 import { formatAddress, formatTbnb, getExplorerAddressUrl } from "@/lib/format";
+import { useNativeBalance } from "@/hooks/useNativeBalance";
 
 export function WalletSummary() {
   const { address, chainId, isConnected } = useAccount();
   const { open } = useAppKit();
   const [error, setError] = useState<string | null>(null);
   const isCorrectNetwork = chainId === bscTestnet.id;
-  const { data: balance, isLoading, refetch } = useBalance({
+  const { data: balance, isLoading, refetch } = useNativeBalance(
     address,
-    chainId: bscTestnet.id,
-    query: {
-      enabled: Boolean(address && isCorrectNetwork),
-    },
-  });
+    isCorrectNetwork,
+  );
 
   async function openAccount() {
     setError(null);
@@ -79,7 +77,7 @@ export function WalletSummary() {
             </Button>
           </div>
           <p className="mt-2 text-2xl font-bold text-slate-950">
-            {isLoading ? "Loading..." : formatTbnb(balance?.value)}
+            {isLoading ? "Loading..." : formatTbnb(balance)}
           </p>
           {!isCorrectNetwork && isConnected ? (
             <p className="mt-2 text-sm text-amber-700">BSC Testnet is required.</p>

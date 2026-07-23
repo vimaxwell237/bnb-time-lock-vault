@@ -1,4 +1,4 @@
-import { defineChain } from "viem";
+import { createPublicClient, defineChain } from "viem";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import {
   cookieStorage,
@@ -59,6 +59,11 @@ export const bscTestnet = defineChain({
     },
   },
   testnet: true,
+});
+
+export const bscTestnetPublicClient = createPublicClient({
+  chain: bscTestnet,
+  transport: http(bscTestnetRpcUrl),
 });
 
 export const reownProjectId =
