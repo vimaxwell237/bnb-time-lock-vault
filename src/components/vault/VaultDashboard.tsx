@@ -80,8 +80,8 @@ export function VaultDashboard() {
         <NetworkWarning />
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
-        <section className="space-y-6 vault-enter vault-enter-delay-1">
+      <div className="mt-5 grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="min-w-0 space-y-5 vault-enter vault-enter-delay-1">
           <VaultStats />
           <VaultList
             error={locksQuery.error}
@@ -93,7 +93,7 @@ export function VaultDashboard() {
           <VaultActivity />
         </section>
 
-        <aside className="space-y-6 vault-enter vault-enter-delay-2 lg:sticky lg:top-6 lg:self-start">
+        <aside className="min-w-0 space-y-5 vault-enter vault-enter-delay-2 lg:sticky lg:top-5 lg:self-start">
           <WalletSummary />
           <DepositForm onTransactionConfirmed={refreshVaultData} />
         </aside>
