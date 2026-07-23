@@ -32,18 +32,19 @@ function ConfiguredWalletButton({
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex w-full items-center gap-2 sm:w-auto">
       <Button
         aria-label={isConnected ? "Open wallet account" : "Connect wallet"}
         onClick={() => void openWalletView()}
         title={error ?? undefined}
+        className="w-full sm:w-auto"
         variant={isConnected ? "secondary" : "primary"}
       >
         <Wallet className="size-4" />
         {isConnected ? formatAddress(address) : "Connect wallet"}
       </Button>
       {error ? (
-        <span className="max-w-48 text-xs font-semibold text-red-700" role="status">
+        <span className="max-w-full text-xs font-semibold text-red-700 sm:max-w-48" role="status">
           Wallet connection failed
         </span>
       ) : null}

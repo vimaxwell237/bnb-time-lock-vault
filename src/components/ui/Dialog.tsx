@@ -75,7 +75,7 @@ export function Dialog({ children, labelledBy, onClose, open }: DialogProps) {
     <div
       aria-labelledby={labelledBy}
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-2 sm:p-4"
       role="dialog"
     >
       <button
@@ -85,7 +85,7 @@ export function Dialog({ children, labelledBy, onClose, open }: DialogProps) {
         type="button"
       />
       <div
-        className="relative max-h-[calc(100vh-2rem)] w-full max-w-lg overflow-y-auto rounded-lg border border-slate-200 bg-white p-5 shadow-xl"
+        className="relative max-h-[calc(100svh-1rem)] w-full max-w-lg overflow-y-auto rounded-lg border border-slate-200 bg-white p-4 shadow-xl sm:max-h-[calc(100vh-2rem)] sm:p-5"
         ref={panelRef}
       >
         <Button

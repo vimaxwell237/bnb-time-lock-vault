@@ -143,7 +143,7 @@ export function VaultActivity() {
             ))}
           </div>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
+          <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-9 size-4 text-slate-400" />
               <Input
@@ -155,7 +155,7 @@ export function VaultActivity() {
                 value={searchId}
               />
             </div>
-            <label className="grid gap-2 text-sm font-medium text-slate-800">
+            <label className="grid min-w-0 gap-2 text-sm font-medium text-slate-800">
               <span>Sort</span>
               <select
                 className="h-11 rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"

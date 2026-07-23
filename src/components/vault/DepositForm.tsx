@@ -378,7 +378,7 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-3">
+    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3">
       <dt className="text-slate-500">{label}</dt>
       <dd className="min-w-0 break-words text-right font-semibold text-slate-950">{value}</dd>
     </div>

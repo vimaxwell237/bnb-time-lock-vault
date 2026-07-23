@@ -40,8 +40,8 @@ export function VaultDashboard() {
   }, [address, queryClient]);
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="vault-hero vault-enter mb-6 flex items-center justify-between gap-6 px-5 py-6 sm:px-7">
+    <div className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
+      <div className="vault-hero vault-enter mb-5 flex flex-col items-start justify-between gap-5 px-4 py-5 sm:mb-6 sm:flex-row sm:items-center sm:px-7 sm:py-6">
         <div className="relative z-10">
           <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase text-emerald-700">
             <span className="vault-status-dot" />
@@ -80,7 +80,7 @@ export function VaultDashboard() {
         <NetworkWarning />
       </div>
 
-      <div className="mt-5 grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="mt-4 grid min-w-0 gap-5 sm:mt-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section className="min-w-0 space-y-5 vault-enter vault-enter-delay-1">
           <VaultStats />
           <VaultList
