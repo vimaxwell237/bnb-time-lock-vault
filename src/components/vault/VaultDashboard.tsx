@@ -57,7 +57,7 @@ export function VaultDashboard() {
             Lock native tBNB, follow every position, and withdraw when it matures.
           </p>
         </div>
-        <div className="relative z-10 hidden size-16 shrink-0 items-center justify-center rounded-2xl border border-emerald-200 bg-white/80 text-emerald-700 shadow-sm sm:flex">
+        <div className="vault-hero-mark relative z-10 hidden size-16 shrink-0 items-center justify-center rounded-2xl border border-emerald-200 bg-white/80 text-emerald-700 shadow-sm sm:flex">
           <LockKeyhole className="size-8" strokeWidth={1.6} />
         </div>
       </div>

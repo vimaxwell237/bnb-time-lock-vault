@@ -66,21 +66,25 @@ export function VaultStats() {
 
   const stats = [
     {
+      tone: "vault-stat-emerald",
       icon: Coins,
       label: "Total locked",
       value: formatTbnb(data?.totalLocked),
     },
     {
+      tone: "vault-stat-sky",
       icon: Landmark,
       label: "Contract balance",
       value: formatTbnb(data?.contractBalance),
     },
     {
+      tone: "vault-stat-amber",
       icon: Boxes,
       label: "Next lock ID",
       value: data?.nextLockId?.toString() ?? "--",
     },
     {
+      tone: "vault-stat-violet",
       icon: Clock,
       label: "Duration range",
       value:
@@ -110,7 +114,7 @@ export function VaultStats() {
                   {isLoading ? <Spinner /> : stat.value}
                 </p>
               </div>
-              <div className="flex size-10 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
+              <div className={`vault-stat-icon flex size-10 items-center justify-center rounded-lg ${stat.tone}`}>
                 <Icon className="size-5" />
               </div>
             </div>

@@ -13,7 +13,7 @@ export function ActivityRow({ activity }: ActivityRowProps) {
   const Icon = isDeposit ? ArrowDownToLine : ArrowUpFromLine;
 
   return (
-    <div className="vault-lift grid gap-3 rounded-lg border border-slate-200 bg-white p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+    <div className="vault-enter vault-lift grid gap-3 rounded-lg border border-slate-200 bg-white p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
           <span
