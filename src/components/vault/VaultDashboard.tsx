@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
+import { LockKeyhole } from "lucide-react";
 import { useAccount } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { NetworkWarning } from "@/components/wallet/NetworkWarning";
@@ -40,10 +41,24 @@ export function VaultDashboard() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-5">
-        <div>
-          <p className="text-sm font-semibold uppercase text-emerald-700">BSC Testnet</p>
-          <h1 className="mt-1 text-3xl font-bold text-slate-950 sm:text-4xl">Time-lock vault</h1>
+      <div className="vault-hero vault-enter mb-6 flex items-center justify-between gap-6 px-5 py-6 sm:px-7">
+        <div className="relative z-10">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase text-emerald-700">
+            <span className="vault-status-dot" />
+            BSC Testnet
+            <span className="rounded-full border border-slate-200 bg-white/80 px-2 py-1 text-slate-600">
+              Chain 97
+            </span>
+          </div>
+          <h1 className="mt-3 text-3xl font-bold text-slate-950 sm:text-4xl">
+            Time-lock vault
+          </h1>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">
+            Lock native tBNB, follow every position, and withdraw when it matures.
+          </p>
+        </div>
+        <div className="relative z-10 hidden size-16 shrink-0 items-center justify-center rounded-2xl border border-emerald-200 bg-white/80 text-emerald-700 shadow-sm sm:flex">
+          <LockKeyhole className="size-8" strokeWidth={1.6} />
         </div>
       </div>
 
@@ -66,7 +81,7 @@ export function VaultDashboard() {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
-        <section className="space-y-6">
+        <section className="space-y-6 vault-enter vault-enter-delay-1">
           <VaultStats />
           <VaultList
             error={locksQuery.error}
@@ -78,7 +93,7 @@ export function VaultDashboard() {
           <VaultActivity />
         </section>
 
-        <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
+        <aside className="space-y-6 vault-enter vault-enter-delay-2 lg:sticky lg:top-6 lg:self-start">
           <WalletSummary />
           <DepositForm onTransactionConfirmed={refreshVaultData} />
         </aside>

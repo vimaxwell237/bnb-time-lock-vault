@@ -41,7 +41,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition disabled:cursor-not-allowed disabled:opacity-55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+        "vault-button inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition disabled:cursor-not-allowed disabled:opacity-55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
         variantClasses[variant],
         sizeClasses[size],
         className,

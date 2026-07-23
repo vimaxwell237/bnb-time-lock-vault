@@ -94,11 +94,15 @@ export function VaultStats() {
 
   return (
     <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {stats.map((stat) => {
+      {stats.map((stat, index) => {
         const Icon = stat.icon;
 
         return (
-          <Card className="min-h-36 p-5" key={stat.label}>
+          <Card
+            className="vault-enter min-h-36 p-5"
+            key={stat.label}
+            style={{ animationDelay: `${120 + index * 70}ms` }}
+          >
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-slate-500">{stat.label}</p>

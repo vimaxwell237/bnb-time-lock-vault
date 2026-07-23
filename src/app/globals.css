@@ -39,6 +39,13 @@ body {
   margin: 0;
   background:
     linear-gradient(180deg, rgba(15, 159, 110, 0.08), transparent 320px),
+    repeating-linear-gradient(
+      90deg,
+      rgba(16, 32, 29, 0.018) 0,
+      rgba(16, 32, 29, 0.018) 1px,
+      transparent 1px,
+      transparent 72px
+    ),
     var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
@@ -53,6 +60,103 @@ input {
   background: rgba(15, 159, 110, 0.22);
 }
 
+@keyframes vault-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes vault-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(15, 159, 110, 0.28);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(15, 159, 110, 0);
+  }
+}
+
+.vault-enter {
+  animation: vault-rise 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.vault-enter-delay-1 {
+  animation-delay: 80ms;
+}
+
+.vault-enter-delay-2 {
+  animation-delay: 160ms;
+}
+
+.vault-enter-delay-3 {
+  animation-delay: 240ms;
+}
+
+.vault-lift {
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.vault-lift:hover {
+  border-color: rgba(15, 159, 110, 0.35);
+  box-shadow: 0 14px 30px rgba(16, 32, 29, 0.08);
+  transform: translateY(-2px);
+}
+
+.vault-button {
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background-color 140ms ease;
+}
+
+.vault-button:not(:disabled):hover {
+  box-shadow: 0 7px 16px rgba(16, 32, 29, 0.1);
+  transform: translateY(-1px);
+}
+
+.vault-button:not(:disabled):active {
+  transform: translateY(0) scale(0.98);
+}
+
+.vault-hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(15, 159, 110, 0.2);
+  border-radius: 12px;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.98), rgba(237, 244, 241, 0.92)),
+    var(--panel);
+  box-shadow: 0 12px 30px rgba(16, 32, 29, 0.06);
+}
+
+.vault-status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  animation: vault-pulse 2.2s ease-in-out infinite;
+}
+
+.vault-brand-mark {
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.vault-brand-mark:hover {
+  box-shadow: 0 8px 20px rgba(15, 159, 110, 0.18);
+  transform: rotate(-4deg) translateY(-1px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -61,5 +165,15 @@ input {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .vault-status-dot {
+    animation: none;
+  }
+
+  .vault-lift:hover,
+  .vault-button:not(:disabled):hover,
+  .vault-button:not(:disabled):active {
+    transform: none;
   }
 }
