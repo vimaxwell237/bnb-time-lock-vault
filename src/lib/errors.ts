@@ -25,6 +25,10 @@ export function getReadableError(error: unknown) {
     return "Insufficient tBNB. Leave enough balance for the deposit and gas.";
   }
 
+  if (normalized.includes("limit exceeded") || normalized.includes("maximum api usage")) {
+    return "Activity history is temporarily rate-limited. Try again in a moment.";
+  }
+
   if (normalized.includes("gas") && normalized.includes("insufficient")) {
     return "Insufficient tBNB for gas.";
   }

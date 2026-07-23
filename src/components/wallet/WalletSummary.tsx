@@ -86,26 +86,6 @@ export function WalletSummary() {
           ) : null}
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs font-semibold uppercase text-slate-500">Current network</p>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="font-semibold text-slate-950">
-              {isConnected ? (isCorrectNetwork ? "BSC Testnet" : `Chain ${chainId ?? "unknown"}`) : "Not connected"}
-            </span>
-            {isConnected ? (
-              <span
-                className={
-                  isCorrectNetwork
-                    ? "inline-flex h-7 items-center rounded-lg border border-emerald-200 bg-emerald-50 px-2 text-xs font-bold text-emerald-800"
-                    : "inline-flex h-7 items-center rounded-lg border border-amber-200 bg-amber-50 px-2 text-xs font-bold text-amber-800"
-                }
-              >
-                {isCorrectNetwork ? "Correct network" : "Wrong network"}
-              </span>
-            ) : null}
-          </div>
-        </div>
-
         <div className="flex flex-wrap gap-2">
           {address ? (
             <a

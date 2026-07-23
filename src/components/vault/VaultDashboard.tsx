@@ -6,7 +6,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { NetworkWarning } from "@/components/wallet/NetworkWarning";
 import { WalletSummary } from "@/components/wallet/WalletSummary";
 import { TransactionNotice } from "@/components/ui/TransactionNotice";
-import { ContractInfo } from "@/components/vault/ContractInfo";
 import { DepositForm } from "@/components/vault/DepositForm";
 import { VaultActivity } from "@/components/vault/VaultActivity";
 import { VaultList } from "@/components/vault/VaultList";
@@ -41,16 +40,11 @@ export function VaultDashboard() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-5">
         <div>
           <p className="text-sm font-semibold uppercase text-emerald-700">BSC Testnet</p>
-          <h1 className="mt-2 text-3xl font-bold text-slate-950 sm:text-4xl">
-            Time-lock vault dashboard
-          </h1>
+          <h1 className="mt-1 text-3xl font-bold text-slate-950 sm:text-4xl">Time-lock vault</h1>
         </div>
-        <p className="max-w-xl text-sm leading-6 text-slate-600">
-          Lock native tBNB by duration, track each lock, and withdraw only after maturity.
-        </p>
       </div>
 
       <div className="space-y-4">
@@ -87,7 +81,6 @@ export function VaultDashboard() {
         <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
           <WalletSummary />
           <DepositForm onTransactionConfirmed={refreshVaultData} />
-          <ContractInfo />
         </aside>
       </div>
     </div>

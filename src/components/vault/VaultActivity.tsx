@@ -14,6 +14,7 @@ import {
   vaultDeploymentBlockMessage,
 } from "@/contracts/vaultConfig";
 import { useVaultActivity } from "@/hooks/useVaultActivity";
+import { getReadableError } from "@/lib/errors";
 import type { VaultActivityType } from "@/types/activity";
 
 type ActivityFilter = "all" | VaultActivityType;
@@ -79,11 +80,10 @@ export function VaultActivity() {
     <Card className="p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-slate-950">
             <History className="size-4" />
             Activity
-          </p>
-          <h2 className="mt-1 text-xl font-bold text-slate-950">Transaction history</h2>
+          </h2>
         </div>
         <Button
           disabled={!activityQuery.isEnabled}
@@ -123,7 +123,7 @@ export function VaultActivity() {
             <div>
               <p className="font-semibold">Could not load activity</p>
               <p className="mt-1 text-sm leading-6">
-                {activityQuery.error.message}
+                {getReadableError(activityQuery.error)}
               </p>
             </div>
           </div>
@@ -167,10 +167,6 @@ export function VaultActivity() {
               </select>
             </label>
           </div>
-
-          <p className="mt-4 text-sm font-semibold text-slate-600">
-            {filteredActivity.length} shown
-          </p>
 
           {filteredActivity.length === 0 ? (
             <ActivityMessage message="Try another filter or lock ID." title={emptyTitle} />

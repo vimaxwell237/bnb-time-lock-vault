@@ -12,9 +12,7 @@ export function Header() {
           </div>
           <div>
             <p className="text-lg font-bold text-slate-950">{siteConfig.name}</p>
-            <p className="text-sm text-slate-600">
-              {siteConfig.networkName} · Chain ID {siteConfig.chainId}
-            </p>
+            <p className="text-sm text-slate-600">{siteConfig.networkName}</p>
           </div>
         </div>
         <ConnectWalletButton />

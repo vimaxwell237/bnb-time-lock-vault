@@ -20,10 +20,8 @@ import { bscTestnet } from "@/config/wagmi";
 import { vaultAbi } from "@/contracts/vaultAbi";
 import { getReadableError } from "@/lib/errors";
 import {
-  formatAddress,
   formatDateTimeFromDate,
   formatDurationFromMinutes,
-  formatTbnb,
 } from "@/lib/format";
 import { validateDepositInput } from "@/lib/validation";
 import { useVaultContract } from "@/hooks/useVaultContract";
@@ -249,9 +247,6 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
               Max
             </Button>
           </div>
-          <p className="mt-2 text-xs leading-5 text-slate-500">
-            Max keeps {formatTbnb(GAS_RESERVE, 4)} for gas and never deposits the complete wallet balance.
-          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {durationPresets.map((preset) => (
@@ -304,12 +299,7 @@ export function DepositForm({ onTransactionConfirmed }: DepositFormProps) {
               label="Estimated release"
               value={estimatedReleaseDate ? formatDateTimeFromDate(estimatedReleaseDate) : "--"}
             />
-            <SummaryRow label="Network" value="BSC Testnet" />
-            <SummaryRow label="Contract" value={formatAddress(vaultAddress)} />
           </dl>
-          <p className="mt-3 text-xs leading-5 text-slate-500">
-            Release time is an estimate until the deposit transaction is mined.
-          </p>
         </div>
 
         <Button className="w-full" disabled={isDisabled} isLoading={isPending || isConfirming} type="submit">
