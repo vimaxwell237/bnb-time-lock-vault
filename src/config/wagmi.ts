@@ -1,10 +1,9 @@
-import { createPublicClient, defineChain } from "viem";
+import { createPublicClient, defineChain, fallback, http } from "viem";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import {
   cookieStorage,
   createConfig,
   createStorage,
-  http,
 } from "wagmi";
 import { siteConfig } from "@/config/site";
 
@@ -61,9 +60,20 @@ export const bscTestnet = defineChain({
   testnet: true,
 });
 
+const readRpcUrls = [
+  bscTestnetRpcUrl,
+  "https://rpc.sentio.xyz/bsc-testnet",
+  "https://binance-testnet.rpc.thirdweb.com/",
+  "https://api.uniblock.dev/uni/v1/json-rpc?chainId=97",
+].filter((url, index, urls) => urls.indexOf(url) === index);
+
+function createBscTestnetTransport() {
+  return fallback(readRpcUrls.map((url) => http(url)));
+}
+
 export const bscTestnetPublicClient = createPublicClient({
   chain: bscTestnet,
-  transport: http(bscTestnetRpcUrl),
+  transport: createBscTestnetTransport(),
 });
 
 export const reownProjectId =
@@ -80,7 +90,7 @@ export const appKitMetadata = {
 
 const storage = createStorage({ storage: cookieStorage });
 const transportConfig = {
-  [bscTestnet.id]: http(bscTestnetRpcUrl),
+  [bscTestnet.id]: createBscTestnetTransport(),
 };
 
 export const wagmiAdapter = reownProjectId
